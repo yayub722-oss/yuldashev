@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+{% block title %}Admin Panel — uzHaridor{% endblock %}
+{% block content %}
+
+<div style="padding:32px 0;">
+    <div class="section-title"><i class="bi bi-shield-check" style="color:var(--gold);"></i> Admin Panel</div>
+    <div class="gold-line"></div>
+
+    <!-- STATS -->
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:32px;">
+        <div style="background:var(--dark2); border:1px solid #222; border-radius:12px; padding:20px;">
+            <div style="color:var(--gray); font-size:0.8rem; margin-bottom:6px;">MAHSULOTLAR</div>
+            <div style="font-family:'Playfair Display',serif; font-size:2rem; color:var(--gold); font-weight:700;">{{ products|length }}</div>
+        </div>
+        <div style="background:var(--dark2); border:1px solid #222; border-radius:12px; padding:20px;">
+            <div style="color:var(--gray); font-size:0.8rem; margin-bottom:6px;">BUYURTMALAR</div>
+            <div style="font-family:'Playfair Display',serif; font-size:2rem; color:var(--gold); font-weight:700;">{{ orders|length }}</div>
+        </div>
+        <div style="background:var(--dark2); border:1px solid #222; border-radius:12px; padding:20px;">
+            <div style="color:var(--gray); font-size:0.8rem; margin-bottom:6px;">UMUMIY SAVDO</div>
+            <div style="font-family:'Playfair Display',serif; font-size:1.4rem; color:var(--gold); font-weight:700;">
+                {{ "{:,.0f}".format(orders|sum(attribute='total_price')) }} so'm
+            </div>
+        </div>
+    </div>
+
+    <!-- TABS -->
+    <div style="display:flex; gap:4px; margin-bottom:24px; background:var(--dark2); padding:4px; border-radius:10px; width:fit-content;">
+        <button onclick="showTab('products')" id="tab-products" style="padding:8px 20px; border-radius:8px; border:none; background:var(--gold); color:#000; font-weight:600; cursor:pointer; font-size:0.88rem;">Mahsulotlar</button>
+        <button onclick="showTab('orders')" id="tab-orders" style="padding:8px 20px; border-radius:8px; border:none; background:transparent; color:#aaa; cursor:pointer; font-size:0.88rem;">Buyurtmalar</button>
+        <button onclick="showTab('add')" id="tab-add" style="padding:8px 20px; border-radius:8px; border:none; background:transparent; color:#aaa; cursor:pointer; font-size:0.88rem;">+ Qo'shish</button>
+    </div>
+
+    <!-- PRODUCTS TAB -->
+    <div id="panel-products">
+        <div style="overflow-x:auto; background:var(--dark2); border:1px solid #222; border-radius:12px;">
+            <table class="dark-table">
+                <thead>
+                    <tr><th>#</th><th>Rasm</th><th>Nomi</th><th>Narxi</th><th>Ombor</th><th>Amal</th></tr>
+                </thead>
+                <tbody>
+                {% for p in products %}
+                <tr>
+                    <td style="color:#555;">{{ p.id }}</td>
+                    <td>
+                        {% if p.image %}
+                            <img src="/{{ p.image }}" style="width:44px;height:44px;object-fit:cover;border-radius:6px;">
+                        {% else %}
+                            <div style="width:44px;height:44px;background:var(--dark3);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#444;"><i class="bi bi-image"></i></div>
+                        {% endif %}
+                    </td>
+                    <td style="color:#fff; font-weight:500;">{{ p.name }}</td>
+                    <td style="color:var(--gold);">{{ "{:,.0f}".format(p.price) }} so'm</td>
+                    <td>
+                        {% if p.stock > 0 %}
+                            <span style="color:#4ade80;">{{ p.stock }} dona</span>
+                        {% else %}
+                            <span style="color:#f87171;">Tugagan</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="/admin/product/delete/{{ p.id }}"
+                           onclick="return confirm('O\'chirishni tasdiqlaysizmi?')"
+                           style="color:#f87171; text-decoration:none; font-size:0.82rem;">
+                            <i class="bi bi-trash"></i> O'chirish
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ORDERS TAB -->
+    <div id="panel-orders" style="display:none;">
+        <div style="overflow-x:auto; background:var(--dark2); border:1px solid #222; border-radius:12px;">
+            <table class="dark-table">
+                <thead>
+                    <tr><th>#</th><th>Mijoz</th><th>Summa</th><th>Manzil</th><th>Holat</th><th>Vaqt</th><th>Amal</th></tr>
+                </thead>
+                <tbody>
+                {% for o in orders %}
+                <tr>
+                    <td style="color:#555;">{{ o.id }}</td>
+                    <td style="color:#fff;">{{ o.user.fullname }}</td>
+                    <td style="color:var(--gold);">{{ "{:,.0f}".format(o.total_price) }} so'm</td>
+                    <td style="color:#888; font-size:0.82rem; max-width:150px;">{{ o.address }}</td>
+                    <td><span class="status-badge status-{{ o.status }}">
+                        {% if o.status == 'pending' %}Kutilmoqda
+                        {% elif o.status == 'processing' %}Jarayonda
+                        {% elif o.status == 'delivered' %}Yetkazildi
+                        {% elif o.status == 'cancelled' %}Bekor{% endif %}
+                    </span></td>
+                    <td style="color:#555; font-size:0.8rem;">{{ o.created_at.strftime('%d.%m.%Y') }}</td>
+                    <td>
+                        <form action="/admin/order/{{ o.id }}/status" method="post" style="display:flex;gap:6px;">
+                            <select name="status" style="background:var(--dark3);border:1px solid #333;border-radius:6px;padding:6px 10px;color:#fff;font-size:0.8rem;outline:none;">
+                                <option value="pending" {% if o.status=='pending' %}selected{% endif %}>Kutilmoqda</option>
+                                <option value="processing" {% if o.status=='processing' %}selected{% endif %}>Jarayonda</option>
+                                <option value="delivered" {% if o.status=='delivered' %}selected{% endif %}>Yetkazildi</option>
+                                <option value="cancelled" {% if o.status=='cancelled' %}selected{% endif %}>Bekor</option>
+                            </select>
+                            <button class="btn-gold" style="padding:6px 12px; font-size:0.8rem;" type="submit">✓</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ADD PRODUCT TAB -->
+    <div id="panel-add" style="display:none; max-width:560px;">
+        <div class="form-card">
+            <div style="font-family:'Playfair Display',serif; font-size:1.3rem; font-weight:700; color:#fff; margin-bottom:24px;">Yangi mahsulot qo'shish</div>
+            <form action="/admin/product/add" method="post" enctype="multipart/form-data">
+                <label class="form-label">Mahsulot nomi *</label>
+                <input type="text" name="name" class="form-input" required>
+
+                <label class="form-label">Tavsif</label>
+                <textarea name="description" class="form-input"></textarea>
+
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                    <div>
+                        <label class="form-label">Narxi (so'm) *</label>
+                        <input type="number" name="price" class="form-input" step="100" required>
+                    </div>
+                    <div>
+                        <label class="form-label">Ombor *</label>
+                        <input type="number" name="stock" class="form-input" value="0" required>
+                    </div>
+                </div>
+
+                <label class="form-label">Kategoriya ID</label>
+                <input type="number" name="category_id" class="form-input">
+
+                <label class="form-label">Rasm</label>
+                <input type="file" name="image" class="form-input" accept="image/*" style="padding:10px;">
+
+                <button class="btn-gold" style="width:100%; justify-content:center; padding:14px; margin-top:8px;" type="submit">
+                    <i class="bi bi-plus-circle"></i> Mahsulot qo'shish
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function showTab(name) {
+    ['products','orders','add'].forEach(t => {
+        document.getElementById('panel-' + t).style.display = t === name ? 'block' : 'none';
+        const btn = document.getElementById('tab-' + t);
+        if(btn) {
+            btn.style.background = t === name ? 'var(--gold)' : 'transparent';
+            btn.style.color = t === name ? '#000' : '#aaa';
+            btn.style.fontWeight = t === name ? '600' : 'normal';
+        }
+    });
+}
+</script>
+
+{% endblock %}

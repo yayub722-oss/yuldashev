@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+{% block title %}Buyurtma — uzHaridor{% endblock %}
+{% block content %}
+
+<div style="max-width:720px; margin:40px auto;">
+    <div class="section-title"><i class="bi bi-box-seam"></i> Buyurtmani rasmiylashtirish</div>
+    <div class="gold-line"></div>
+
+    <form action="/checkout" method="post" id="checkoutForm">
+
+        <!-- MANZIL BO'LIMI -->
+        <div class="form-card" style="margin-bottom:20px;">
+            <div style="font-family:'Playfair Display',serif; font-size:1.1rem; color:#fff; margin-bottom:20px; display:flex; align-items:center; gap:10px;">
+                <i class="bi bi-geo-alt-fill" style="color:var(--gold);"></i> Yetkazib berish manzili
+            </div>
+
+            <!-- XARITA -->
+            <div style="border-radius:12px; overflow:hidden; border:1px solid #333; margin-bottom:20px; position:relative;">
+                <div id="map" style="width:100%; height:300px;"></div>
+                <div style="position:absolute; top:10px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,0.8); color:var(--gold); font-size:0.8rem; padding:6px 14px; border-radius:20px; pointer-events:none; white-space:nowrap;">
+                    <i class="bi bi-cursor"></i> Xaritada manzilingizni belgilang
+                </div>
+            </div>
+
+            <!-- AVTOMATIK TO'LDIRILGAN MANZIL -->
+            <div style="background:var(--dark3); border:1px solid #333; border-radius:8px; padding:12px 16px; margin-bottom:16px; display:flex; align-items:center; gap:10px;">
+                <i class="bi bi-pin-map-fill" style="color:var(--gold);"></i>
+                <span id="selectedAddress" style="color:#aaa; font-size:0.88rem;">Xaritada joy tanlang...</span>
+            </div>
+
+            <input type="hidden" name="map_address" id="mapAddress">
+            <input type="hidden" name="lat" id="latInput">
+            <input type="hidden" name="lng" id="lngInput">
+
+            <!-- QO'SHIMCHA MAYDONLAR -->
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+                <div>
+                    <label class="form-label">Shahar *</label>
+                    <input type="text" name="city" class="form-input" placeholder="Toshkent" required>
+                </div>
+                <div>
+                    <label class="form-label">Tuman *</label>
+                    <input type="text" name="district" class="form-input" placeholder="Yunusobod" required>
+                </div>
+                <div>
+                    <label class="form-label">Ko'cha *</label>
+                    <input type="text" name="street" class="form-input" placeholder="Amir Temur ko'chasi" required>
+                </div>
+                <div>
+                    <label class="form-label">Uy / Xonadon *</label>
+                    <input type="text" name="house" class="form-input" placeholder="12-uy, 5-xonadon" required>
+                </div>
+            </div>
+
+            <div>
+                <label class="form-label">Qo'shimcha izoh (ixtiyoriy)</label>
+                <textarea name="note" class="form-input" rows="2" placeholder="Qo'ng'iroq qiling, 3-qavat..."></textarea>
+            </div>
+        </div>
+
+        <!-- TO'LOV USULI -->
+        <div class="form-card" style="margin-bottom:20px;">
+            <div style="font-family:'Playfair Display',serif; font-size:1.1rem; color:#fff; margin-bottom:20px; display:flex; align-items:center; gap:10px;">
+                <i class="bi bi-credit-card-fill" style="color:var(--gold);"></i> To'lov usuli
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                <label style="cursor:pointer;">
+                    <input type="radio" name="payment" value="cash" checked style="display:none;" class="pay-radio">
+                    <div class="pay-option selected" data-val="cash">
+                        <i class="bi bi-cash-stack" style="font-size:1.4rem; color:var(--gold);"></i>
+                        <div style="font-weight:600; color:#fff; margin-top:8px;">Naqt pul</div>
+                        <div style="font-size:0.78rem; color:#888;">Yetkazib berishda</div>
+                    </div>
+                </label>
+
+                <label style="cursor:pointer;">
+                    <input type="radio" name="payment" value="payme" style="display:none;" class="pay-radio">
+                    <div class="pay-option" data-val="payme">
+                        <i class="bi bi-phone" style="font-size:1.4rem; color:#00AAFF;"></i>
+                        <div style="font-weight:600; color:#fff; margin-top:8px;">Payme</div>
+                        <div style="font-size:0.78rem; color:#888;">Online to'lov</div>
+                    </div>
+                </label>
+
+                <label style="cursor:pointer;">
+                    <input type="radio" name="payment" value="click" style="display:none;" class="pay-radio">
+                    <div class="pay-option" data-val="click">
+                        <i class="bi bi-lightning-charge" style="font-size:1.4rem; color:#FF6B00;"></i>
+                        <div style="font-weight:600; color:#fff; margin-top:8px;">Click</div>
+                        <div style="font-size:0.78rem; color:#888;">Online to'lov</div>
+                    </div>
+                </label>
+
+                <label style="cursor:pointer;">
+                    <input type="radio" name="payment" value="card" style="display:none;" class="pay-radio">
+                    <div class="pay-option" data-val="card">
+                        <i class="bi bi-credit-card" style="font-size:1.4rem; color:#A084E8;"></i>
+                        <div style="font-weight:600; color:#fff; margin-top:8px;">Karta</div>
+                        <div style="font-size:0.78rem; color:#888;">Yetkazib berishda</div>
+                    </div>
+                </label>
+            </div>
+        </div>
+
+        <!-- TELEFON -->
+        <div class="form-card" style="margin-bottom:24px;">
+            <div style="font-family:'Playfair Display',serif; font-size:1.1rem; color:#fff; margin-bottom:20px; display:flex; align-items:center; gap:10px;">
+                <i class="bi bi-telephone-fill" style="color:var(--gold);"></i> Bog'lanish
+            </div>
+            <label class="form-label">Telefon raqam *</label>
+            <input type="tel" name="phone" class="form-input" placeholder="+998 90 123 45 67" required>
+        </div>
+
+        <button class="btn-gold" style="width:100%; justify-content:center; padding:16px; font-size:1rem;" type="submit">
+            <i class="bi bi-check-circle"></i> Buyurtmani tasdiqlash
+        </button>
+
+        <a href="/cart" style="display:block; text-align:center; color:var(--gray); text-decoration:none; font-size:0.85rem; margin-top:14px;">
+            <i class="bi bi-arrow-left"></i> Savatga qaytish
+        </a>
+    </form>
+</div>
+
+<style>
+.pay-option {
+    background: var(--dark3);
+    border: 1px solid #333;
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+    transition: all 0.2s;
+}
+.pay-option:hover { border-color: var(--gold); }
+.pay-option.selected { border-color: var(--gold); background: #1a1400; }
+</style>
+
+<script src="https://api-maps.yandex.ru/2.1/?apikey=039bfe23-38be-4649-b767-cf3433410f7d&lang=uz_UZ" type="text/javascript"></script>
+<script>
+// To'lov tugmalari
+document.querySelectorAll('.pay-radio').forEach(radio => {
+    radio.addEventListener('change', function() {
+        document.querySelectorAll('.pay-option').forEach(o => o.classList.remove('selected'));
+        this.nextElementSibling.classList.add('selected');
+    });
+});
+
+document.querySelectorAll('.pay-option').forEach(opt => {
+    opt.addEventListener('click', function() {
+        const val = this.dataset.val;
+        document.querySelector(`.pay-radio[value="${val}"]`).checked = true;
+        document.querySelectorAll('.pay-option').forEach(o => o.classList.remove('selected'));
+        this.classList.add('selected');
+    });
+});
+
+// Yandex Maps
+function initMap() {
+    const map = new ymaps.Map('map', {
+        center: [41.2995, 69.2401],
+        zoom: 12,
+        controls: ['zoomControl', 'geolocationControl']
+    });
+
+    let placemark = null;
+
+    map.events.add('click', function(e) {
+        const coords = e.get('coords');
+
+        if (placemark) map.geoObjects.remove(placemark);
+
+        placemark = new ymaps.Placemark(coords, {}, {
+            preset: 'islands#redCircleDotIcon'
+        });
+        map.geoObjects.add(placemark);
+
+        document.getElementById('latInput').value = coords[0];
+        document.getElementById('lngInput').value = coords[1];
+
+        ymaps.geocode(coords).then(function(res) {
+            const addr = res.geoObjects.get(0).getAddressLine();
+            document.getElementById('selectedAddress').textContent = addr;
+            document.getElementById('mapAddress').value = addr;
+
+            // Avtomatik to'ldirish
+            const obj = res.geoObjects.get(0);
+            const parts = obj.properties.getAll();
+            try {
+                const locality = parts.metaDataProperty.GeocoderMetaData.Address.Components;
+                locality.forEach(c => {
+                    if (c.kind === 'locality') {
+                        const cityInput = document.querySelector('[name="city"]');
+                        if (!cityInput.value) cityInput.value = c.name;
+                    }
+                    if (c.kind === 'district') {
+                        const distInput = document.querySelector('[name="district"]');
+                        if (!distInput.value) distInput.value = c.name;
+                    }
+                    if (c.kind === 'street') {
+                        const streetInput = document.querySelector('[name="street"]');
+                        if (!streetInput.value) streetInput.value = c.name;
+                    }
+                    if (c.kind === 'house') {
+                        const houseInput = document.querySelector('[name="house"]');
+                        if (!houseInput.value) houseInput.value = c.name;
+                    }
+                });
+            } catch(e) {}
+        });
+    });
+
+    // Geolokatsiya
+    const geolocation = ymaps.geolocation;
+    geolocation.get({ provider: 'browser', mapStateAutoApply: true }).then(function(result) {
+        map.setCenter(result.geoObjects.get(0).geometry.getCoordinates(), 14);
+    });
+}
+
+ymaps.ready(initMap);
+</script>
+
+
+
+{% endblock %}

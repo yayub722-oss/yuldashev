@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}Katalog — uzHaridor{% endblock %}
+{% block content %}
+
+<div style="display:grid; grid-template-columns:240px 1fr; gap:24px; padding:24px 0;">
+
+    <!-- FILTER SIDEBAR -->
+    <div>
+        <div style="background:var(--dark2); border:1px solid #1e1e1e; border-radius:12px; padding:20px; position:sticky; top:90px;">
+            <div style="font-weight:700; color:#fff; margin-bottom:16px; font-size:0.95rem;"><i class="bi bi-funnel" style="color:var(--gold);"></i> Filtr</div>
+
+            <form action="/catalog" method="get">
+                <!-- KATEGORIYA -->
+                <div style="margin-bottom:20px;">
+                    <div style="font-size:0.75rem; color:#666; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;">Kategoriya</div>
+                    <a href="/catalog" style="display:block; font-size:0.85rem; color:{% if not request.args.get('category_id') %}var(--gold){% else %}#888{% endif %}; text-decoration:none; padding:5px 0;">Hammasi</a>
+                    {% for cat in categories %}
+                    <a href="/catalog?category_id={{ cat.id }}" style="display:block; font-size:0.85rem; color:{% if request.args.get('category_id')==cat.id|string %}var(--gold){% else %}#888{% endif %}; text-decoration:none; padding:5px 0; transition:color 0.2s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='{% if request.args.get('category_id')==cat.id|string %}var(--gold){% else %}#888{% endif %}'">
+                        {{ cat.name }}
+                    </a>
+                    {% endfor %}
+                </div>
+
+                <!-- NARX -->
+                <div style="margin-bottom:20px; border-top:1px solid #222; padding-top:16px;">
+                    <div style="font-size:0.75rem; color:#666; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;">Narx (so'm)</div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                        <input type="number" name="min_price" placeholder="dan" value="{{ request.args.get('min_price','') }}" class="form-input" style="margin:0; padding:8px 10px; font-size:0.82rem;">
+                        <input type="number" name="max_price" placeholder="gacha" value="{{ request.args.get('max_price','') }}" class="form-input" style="margin:0; padding:8px 10px; font-size:0.82rem;">
+                    </div>
+                </div>
+
+                <!-- MAVJUDLIK -->
+                <div style="margin-bottom:20px; border-top:1px solid #222; padding-top:16px;">
+                    <div style="font-size:0.75rem; color:#666; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;">Mavjudlik</div>
+                    <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                        <input type="checkbox" name="in_stock" value="1" {% if request.args.get('in_stock') %}checked{% endif %} style="accent-color:var(--gold);">
+                        <span style="font-size:0.85rem; color:#aaa;">Faqat mavjudlar</span>
+                    </label>
+                </div>
+
+                <!-- SARALASH -->
+                <div style="margin-bottom:20px; border-top:1px solid #222; padding-top:16px;">
+                    <div style="font-size:0.75rem; color:#666; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;">Saralash</div>
+                    <select name="sort" class="form-input" style="margin:0; padding:8px 10px; font-size:0.82rem;">
+                        <option value="">Standart</option>
+                        <option value="price_asc" {% if request.args.get('sort')=='price_asc' %}selected{% endif %}>Narx: arzondan</option>
+                        <option value="price_desc" {% if request.args.get('sort')=='price_desc' %}selected{% endif %}>Narx: qimmatdan</option>
+                        <option value="new" {% if request.args.get('sort')=='new' %}selected{% endif %}>Yangiliklar</option>
+                    </select>
+                </div>
+
+                <button class="btn-gold" style="width:100%; justify-content:center; padding:10px;" type="submit">
+                    <i class="bi bi-funnel"></i> Filtrlash
+                </button>
+                <a href="/catalog" style="display:block; text-align:center; color:#555; font-size:0.8rem; text-decoration:none; margin-top:8px;">Tozalash</a>
+            </form>
+        </div>
+    </div>
+
+    <!-- MAHSULOTLAR -->
+    <div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <div>
+                <div class="section-title">Katalog</div>
+                <div class="gold-line" style="margin-bottom:0;"></div>
+            </div>
+            <div style="color:#666; font-size:0.85rem;">{{ products|length }} ta mahsulot</div>
+        </div>
+
+        <div class="products-grid">
+            {% for product in products %}
+            <div class="product-card">
+                <div style="position:relative;">
+                    {% if product.image %}
+                        <img src="/{{ product.image }}" class="product-img" alt="{{ product.name }}">
+                    {% else %}
+                        <div class="product-img-ph"><i class="bi bi-image"></i></div>
+                    {% endif %}
+                    <button class="wishlist-btn" style="position:absolute; top:10px; right:10px;"><i class="bi bi-heart"></i></button>
+                    {% if product.stock == 0 %}
+                        <div style="position:absolute; top:10px; left:10px; background:#2e0d0d; color:#f87171; font-size:0.7rem; padding:3px 10px; border-radius:20px; border:1px solid #5c1a1a;">Tugagan</div>
+                    {% endif %}
+                </div>
+                <div class="product-body">
+                    <div class="product-cat">{{ product.category.name if product.category else 'Kategoriyasiz' }}</div>
+                    <div class="product-name">{{ product.name }}</div>
+                    <div class="product-price">{{ "{:,.0f}".format(product.price) }} so'm</div>
+                    <div style="font-size:0.75rem; color:{% if product.stock > 0 %}#4ade80{% else %}#f87171{% endif %}; margin-bottom:12px;">
+                        {% if product.stock > 0 %}<i class="bi bi-check-circle-fill"></i> {{ product.stock }} dona{% else %}<i class="bi bi-x-circle-fill"></i> Tugagan{% endif %}
+                    </div>
+                    <div class="product-actions">
+                        <a href="/product/{{ product.id }}" class="btn-outline-gold" style="flex:1; justify-content:center; font-size:0.78rem; padding:8px;">Ko'rish</a>
+                        {% if session.user_id and product.stock > 0 %}
+                        <form action="/cart/add/{{ product.id }}" method="post">
+                            <button class="btn-gold" style="padding:8px 12px;" type="submit"><i class="bi bi-bag-plus"></i></button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div style="grid-column:1/-1; text-align:center; padding:80px 0; color:#444;">
+                <i class="bi bi-search" style="font-size:3rem; display:block; margin-bottom:14px;"></i>
+                <p>Mahsulot topilmadi</p>
+                <a href="/catalog" style="color:var(--gold); text-decoration:none; font-size:0.85rem;">Filtrni tozalash</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

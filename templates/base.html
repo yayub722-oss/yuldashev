@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}uzHaridor{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #C9A84C;
+            --gold-light: #E8C96A;
+            --gold-dark: #A07830;
+            --black: #0A0A0A;
+            --dark: #111111;
+            --dark2: #1A1A1A;
+            --dark3: #222222;
+            --gray: #888888;
+            --bg: #0A0A0A;
+            --bg2: #1A1A1A;
+            --bg3: #222222;
+            --border: #1e1e1e;
+            --text: #ffffff;
+            --text2: #bbbbbb;
+            --text3: #888888;
+            --topbar-bg: #0d0d0d;
+            --navbar-bg: rgba(10,10,10,0.98);
+            --catNav-bg: #111111;
+            --input-bg: #222222;
+            --card-shadow: rgba(201,168,76,0.1);
+        }
+        [data-theme="light"] {
+            --black: #f0f0f0;
+            --dark: #ffffff;
+            --dark2: #f5f5f5;
+            --dark3: #ebebeb;
+            --gray: #777777;
+            --bg: #f0f0f0;
+            --bg2: #ffffff;
+            --bg3: #ebebeb;
+            --border: #dddddd;
+            --text: #111111;
+            --text2: #444444;
+            --text3: #777777;
+            --topbar-bg: #1a1a1a;
+            --navbar-bg: rgba(255,255,255,0.98);
+            --catNav-bg: #ffffff;
+            --input-bg: #f5f5f5;
+            --card-shadow: rgba(201,168,76,0.15);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; transition:background 0.3s, border-color 0.3s, color 0.2s; }
+        body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; min-height:100vh; }
+
+        /* TOP BAR */
+        .topbar {
+            background:var(--topbar-bg);
+            border-bottom:1px solid var(--border);
+            padding:7px 0;
+            font-size:0.78rem;
+            color:#666;
+        }
+        .topbar a { color:#666; text-decoration:none; }
+        .topbar a:hover { color:var(--gold); }
+        .topbar-inner { max-width:1400px; margin:0 auto; padding:0 24px; display:flex; justify-content:space-between; align-items:center; }
+
+        /* NAVBAR */
+        .navbar { background:var(--navbar-bg); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:1000; backdrop-filter:blur(12px); }
+        .nav-inner { max-width:1400px; margin:0 auto; padding:0 24px; display:flex; align-items:center; gap:24px; height:68px; }
+        .brand { font-family:'Playfair Display',serif; font-size:1.6rem; font-weight:900; background:linear-gradient(135deg,var(--gold),var(--gold-light),var(--gold-dark)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; text-decoration:none; white-space:nowrap; }
+
+        .nav-search { flex:1; max-width:480px; position:relative; }
+        .nav-search input { width:100%; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; padding:10px 44px 10px 16px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.88rem; outline:none; transition:border-color 0.2s; }
+        .nav-search input:focus { border-color:var(--gold); }
+        .nav-search input::placeholder { color:var(--text3); }
+        .nav-search button { position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--gold); cursor:pointer; }
+
+        .nav-links { display:flex; align-items:center; gap:4px; margin-left:auto; }
+        .nav-link { color:var(--text2); text-decoration:none; font-size:0.85rem; padding:8px 12px; border-radius:6px; transition:all 0.2s; display:flex; align-items:center; gap:6px; white-space:nowrap; }
+        .nav-link:hover { color:var(--gold); background:var(--bg3); }
+        .nav-icon-btn { position:relative; background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:9px 13px; color:var(--text); text-decoration:none; display:flex; align-items:center; gap:6px; font-size:0.85rem; transition:all 0.2s; }
+        .nav-icon-btn:hover { border-color:var(--gold); color:var(--gold); }
+        .nav-badge { background:var(--gold); color:#000; font-size:0.62rem; font-weight:700; width:17px; height:17px; border-radius:50%; display:flex; align-items:center; justify-content:center; position:absolute; top:-5px; right:-5px; }
+
+        /* CATALOG NAVBAR */
+        .cat-nav { background:var(--catNav-bg); border-bottom:1px solid var(--border); }
+        .cat-nav-inner { max-width:1400px; margin:0 auto; padding:0 24px; display:flex; align-items:center; gap:2px; overflow-x:auto; scrollbar-width:none; }
+        .cat-nav-inner::-webkit-scrollbar { display:none; }
+        .cat-nav-link { color:var(--text3); text-decoration:none; font-size:0.82rem; padding:10px 14px; white-space:nowrap; border-bottom:2px solid transparent; transition:all 0.2s; display:flex; align-items:center; gap:6px; }
+        .cat-nav-link:hover, .cat-nav-link.active { color:var(--gold); border-bottom-color:var(--gold); }
+
+        /* BUTTONS */
+        .btn-gold { background:linear-gradient(135deg,var(--gold),var(--gold-light)); color:#000; border:none; padding:10px 20px; border-radius:8px; font-family:'DM Sans',sans-serif; font-weight:600; font-size:0.88rem; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:6px; transition:all 0.2s; }
+        .btn-gold:hover { filter:brightness(1.1); transform:translateY(-1px); color:#000; }
+        .btn-outline-gold { background:transparent; color:var(--gold); border:1px solid var(--gold); padding:10px 20px; border-radius:8px; font-family:'DM Sans',sans-serif; font-weight:500; font-size:0.88rem; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:6px; transition:all 0.2s; }
+        .btn-outline-gold:hover { background:var(--gold); color:#000; }
+
+        /* CONTAINER */
+        .container { max-width:1400px; margin:0 auto; padding:0 24px; }
+
+        /* ALERTS */
+        .alerts { padding:12px 0 0; }
+        .alert { padding:12px 16px; border-radius:8px; margin-bottom:8px; font-size:0.88rem; display:flex; align-items:center; justify-content:space-between; }
+        .alert-success { background:#0d2e1a; border:1px solid #1a5c30; color:#4ade80; }
+        .alert-danger  { background:#2e0d0d; border:1px solid #5c1a1a; color:#f87171; }
+        .alert-warning { background:#2e250d; border:1px solid #5c4a1a; color:#fbbf24; }
+        .alert-info    { background:#0d1e2e; border:1px solid #1a3a5c; color:#60a5fa; }
+        .alert-close { background:none; border:none; color:inherit; cursor:pointer; font-size:1.1rem; padding:0 4px; }
+
+        /* PRODUCT CARDS */
+        .product-card { background:var(--bg2); border:1px solid var(--border); border-radius:12px; overflow:hidden; transition:all 0.3s; height:100%; display:flex; flex-direction:column; }
+        .product-card:hover { border-color:var(--gold); transform:translateY(-5px); box-shadow:0 16px 40px var(--card-shadow); }
+        .product-img { width:100%; height:210px; object-fit:cover; }
+        .product-img-ph { width:100%; height:210px; background:var(--bg3); display:flex; align-items:center; justify-content:center; color:#333; font-size:2.5rem; }
+        .product-body { padding:14px; flex:1; display:flex; flex-direction:column; }
+        .product-cat { font-size:0.7rem; color:var(--gold); text-transform:uppercase; letter-spacing:1px; margin-bottom:5px; }
+        .product-name { font-weight:600; font-size:0.92rem; color:var(--text); margin-bottom:6px; line-height:1.35; flex:1; }
+        .product-price { font-family:'Playfair Display',serif; font-size:1.15rem; color:var(--gold); font-weight:700; margin-bottom:3px; }
+        .product-old-price { font-size:0.78rem; color:#555; text-decoration:line-through; margin-bottom:10px; }
+        .product-actions { display:flex; gap:8px; margin-top:auto; }
+        .wishlist-btn { background:var(--dark3); border:1px solid #333; border-radius:6px; padding:8px 10px; color:#888; cursor:pointer; transition:all 0.2s; font-size:0.9rem; }
+        .wishlist-btn:hover { color:#f87171; border-color:#f87171; }
+
+        /* GRID */
+        .products-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:18px; }
+
+        /* SECTION */
+        .section-title { font-family:'Playfair Display',serif; font-size:1.5rem; font-weight:700; color:#fff; margin-bottom:6px; }
+        .gold-line { width:44px; height:3px; background:linear-gradient(90deg,var(--gold),var(--gold-light)); border-radius:2px; margin-bottom:22px; }
+
+        /* FORM */
+        .form-card { background:var(--bg2); border:1px solid var(--border); border-radius:14px; padding:36px; }
+        .form-label { color:var(--text3); font-size:0.82rem; margin-bottom:5px; display:block; }
+        .form-input { width:100%; background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:11px 14px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.88rem; outline:none; transition:border-color 0.2s; margin-bottom:14px; }
+        .form-input:focus { border-color:var(--gold); }
+        .form-input::placeholder { color:var(--text3); }
+        textarea.form-input { resize:vertical; min-height:80px; }
+        select.form-input { cursor:pointer; }
+
+        /* STATUS */
+        .status-badge { padding:4px 12px; border-radius:20px; font-size:0.73rem; font-weight:600; }
+        .status-pending    { background:#2e250d; color:#fbbf24; }
+        .status-processing { background:#0d1e2e; color:#60a5fa; }
+        .status-delivered  { background:#0d2e1a; color:#4ade80; }
+        .status-cancelled  { background:#2e0d0d; color:#f87171; }
+
+        /* TABLE */
+        .dark-table { width:100%; border-collapse:collapse; font-size:0.86rem; }
+        .dark-table th { background:var(--bg3); color:var(--gold); font-weight:600; padding:12px 14px; text-align:left; border-bottom:1px solid #222; }
+        .dark-table td { padding:11px 14px; border-bottom:1px solid var(--border); color:var(--text2); vertical-align:middle; }
+        .dark-table tr:hover td { background:var(--bg3); }
+
+        /* FOOTER */
+        footer { border-top:1px solid var(--border); margin-top:80px; }
+        .footer-top { padding:50px 0; display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:40px; }
+        .footer-brand { font-family:'Playfair Display',serif; font-size:1.5rem; background:linear-gradient(135deg,var(--gold),var(--gold-light)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:12px; }
+        .footer-desc { color:var(--text3); font-size:0.85rem; line-height:1.7; max-width:260px; }
+        .footer-title { color:var(--text3); font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:16px; }
+        .footer-link { color:var(--text3); text-decoration:none; font-size:0.85rem; display:block; margin-bottom:8px; transition:color 0.2s; }
+        .footer-link:hover { color:var(--gold); }
+        .footer-bottom { border-top:1px solid var(--border); padding:20px 0; display:flex; justify-content:space-between; align-items:center; color:var(--text3); font-size:0.8rem; }
+        .social-links { display:flex; gap:10px; }
+        .social-link { width:34px; height:34px; border:1px solid var(--border); border-radius:6px; display:flex; align-items:center; justify-content:center; color:#666; text-decoration:none; transition:all 0.2s; font-size:0.9rem; }
+        .social-link:hover { border-color:var(--gold); color:var(--gold); }
+
+        @media(max-width:768px) {
+            .nav-search { display:none; }
+            .topbar .topbar-right { display:none; }
+            .products-grid { grid-template-columns:repeat(2,1fr); gap:10px; }
+            .footer-top { grid-template-columns:1fr 1fr; }
+        }
+
+        /* LIGHT MODE overrides */
+        [data-theme="light"] .topbar { color:#fff; }
+        [data-theme="light"] .topbar a { color:#ddd; }
+        [data-theme="light"] .topbar a:hover { color:var(--gold-light); }
+        [data-theme="light"] .navbar { box-shadow:0 2px 16px rgba(0,0,0,0.08); }
+        [data-theme="light"] .nav-link { color:#444; }
+        [data-theme="light"] .nav-link:hover { color:var(--gold-dark); }
+        [data-theme="light"] .cat-nav-link { color:#555; }
+        [data-theme="light"] .cat-nav-link:hover,
+        [data-theme="light"] .cat-nav-link.active { color:var(--gold-dark); border-bottom-color:var(--gold-dark); }
+        [data-theme="light"] .product-card { box-shadow:0 2px 12px rgba(0,0,0,0.06); }
+        [data-theme="light"] .product-cat { color:var(--gold-dark); }
+        [data-theme="light"] .product-price { color:var(--gold-dark); }
+        [data-theme="light"] .dark-table th { color:var(--gold-dark); }
+        [data-theme="light"] .section-title { color:#111; }
+        [data-theme="light"] .gold-line { background:linear-gradient(90deg,var(--gold-dark),var(--gold)); }
+        [data-theme="light"] .alert-success { background:#d1fae5; border-color:#6ee7b7; color:#065f46; }
+        [data-theme="light"] .alert-danger  { background:#fee2e2; border-color:#fca5a5; color:#991b1b; }
+        [data-theme="light"] .alert-warning { background:#fef3c7; border-color:#fcd34d; color:#92400e; }
+        [data-theme="light"] .alert-info    { background:#dbeafe; border-color:#93c5fd; color:#1e40af; }
+        [data-theme="light"] .status-pending    { background:#fef3c7; color:#92400e; }
+        [data-theme="light"] .status-processing { background:#dbeafe; color:#1e40af; }
+        [data-theme="light"] .status-delivered  { background:#d1fae5; color:#065f46; }
+        [data-theme="light"] .status-cancelled  { background:#fee2e2; color:#991b1b; }
+        [data-theme="light"] .wishlist-btn { background:#f5f5f5; border-color:#ddd; color:#555; }
+        [data-theme="light"] footer { background:#f8f8f8; }
+        [data-theme="light"] .footer-bottom a { color:#888; }
+        [data-theme="light"] .brand { background:linear-gradient(135deg,var(--gold-dark),var(--gold)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+    <div class="topbar-inner">
+        <div>
+            <i class="bi bi-truck"></i> 100,000 so'mdan yuqori buyurtmalarga <strong style="color:var(--gold);">bepul yetkazib berish</strong>
+            &nbsp;|&nbsp;
+            <i class="bi bi-telephone"></i> <a href="tel:+998901234567">+998 90 123 45 67</a>
+        </div>
+        <div class="topbar-right" style="display:flex; gap:16px;">
+            <a href="/"><i class="bi bi-question-circle"></i> Yordam</a>
+            <a href="/"><i class="bi bi-geo-alt"></i> Toshkent</a>
+            {% if session.user_id %}
+                <a href="/profile" style="color:#aaa; text-decoration:none;"><i class="bi bi-person"></i> {{ session.fullname }}</a>
+            {% else %}
+                <a href="/login">Kirish</a> / <a href="/register">Ro'yxat</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- MAIN NAVBAR -->
+<nav class="navbar">
+    <div class="nav-inner">
+        <a href="/" class="brand">uzHaridor</a>
+
+        <form class="nav-search" action="/" method="get">
+            <input type="text" name="q" placeholder="Mahsulot, kategoriya qidirish..." value="{{ request.args.get('q','') }}">
+            <button type="submit"><i class="bi bi-search"></i></button>
+        </form>
+
+        <div class="nav-links">
+            <!-- THEME TOGGLE -->
+            <button onclick="toggleTheme()" id="themeBtn" title="Yorug'/Tungi rejim"
+                style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:9px 13px; color:var(--text); cursor:pointer; font-size:1rem; display:flex; align-items:center; gap:6px; transition:all 0.2s;">
+                <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
+            </button>
+            <a href="/wishlist" class="nav-icon-btn"><i class="bi bi-heart"></i> <span style="font-size:0.82rem;">Sevimlilar</span></a>
+            <a href="/cart" class="nav-icon-btn">
+                <i class="bi bi-bag"></i> <span style="font-size:0.82rem;">Savat</span>
+                {% if session.cart %}<span class="nav-badge">{{ session.cart|length }}</span>{% endif %}
+            </a>
+            {% if session.user_id %}
+                <a href="/orders" class="nav-link"><i class="bi bi-receipt"></i> Buyurtmalar</a>
+                {% if session.is_admin %}<a href="/admin" class="nav-link" style="color:var(--gold);"><i class="bi bi-shield-check"></i> Admin</a>{% endif %}
+                <a href="/logout" class="nav-link">Chiqish</a>
+            {% else %}
+                <a href="/login" class="btn-outline-gold" style="padding:8px 16px;">Kirish</a>
+                <a href="/register" class="btn-gold" style="padding:8px 16px;">Ro'yxat</a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+
+<!-- CATEGORY NAVBAR -->
+<div class="cat-nav">
+    <div class="cat-nav-inner">
+        <a href="/" class="cat-nav-link {% if not request.args.get('category_id') and request.path=='/' %}active{% endif %}">
+            <i class="bi bi-grid-3x3-gap"></i> Barcha tovarlar
+        </a>
+        <a href="/?sort=new" class="cat-nav-link"><i class="bi bi-stars"></i> Yangiliklar</a>
+        <a href="/?sort=sale" class="cat-nav-link"><i class="bi bi-percent"></i> Chegirmalar</a>
+        <a href="/?sort=top" class="cat-nav-link"><i class="bi bi-trophy"></i> Top sotuvlar</a>
+        <span style="color:#2a2a2a; padding:0 4px;">|</span>
+        {% for cat in (categories if categories is defined else []) %}
+        <a href="/?category_id={{ cat.id }}" class="cat-nav-link {% if request.args.get('category_id')==cat.id|string %}active{% endif %}">
+            {{ cat.name }}
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="container">
+    <div class="alerts">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for cat, msg in messages %}
+            <div class="alert alert-{{ cat }}">
+                <span>{{ msg }}</span>
+                <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+            </div>
+            {% endfor %}
+        {% endwith %}
+    </div>
+    {% block content %}{% endblock %}
+</div>
+
+<!-- FOOTER -->
+<footer>
+    <div class="container">
+        <div class="footer-top">
+            <div>
+                <div class="footer-brand">uzHaridor</div>
+                <p class="footer-desc">O'zbekistonning eng qulay va ishonchli online do'koni. Sifatli mahsulotlar, tez yetkazib berish.</p>
+                <div class="social-links" style="margin-top:20px;">
+                    <a href="#" class="social-link"><i class="bi bi-telegram"></i></a>
+                    <a href="#" class="social-link"><i class="bi bi-instagram"></i></a>
+                    <a href="#" class="social-link"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="social-link"><i class="bi bi-youtube"></i></a>
+                </div>
+            </div>
+            <div>
+                <div class="footer-title">Havolalar</div>
+                <a href="/" class="footer-link">Bosh sahifa</a>
+                <a href="/catalog" class="footer-link">Katalog</a>
+                <a href="#" class="footer-link">Chegirmalar</a>
+                <a href="#" class="footer-link">Yangiliklar</a>
+            </div>
+            <div>
+                <div class="footer-title">Mijozlarga</div>
+                <a href="#" class="footer-link">Yetkazib berish</a>
+                <a href="#" class="footer-link">Qaytarish</a>
+                <a href="#" class="footer-link">Kafolat</a>
+                <a href="#" class="footer-link">To'lov usullari</a>
+            </div>
+            <div>
+                <div class="footer-title">Bog'lanish</div>
+                <a href="tel:+998901234567" class="footer-link"><i class="bi bi-telephone"></i> +998 90 123 45 67</a>
+                <a href="mailto:info@uzharidor.uz" class="footer-link"><i class="bi bi-envelope"></i> info@uzharidor.uz</a>
+                <p class="footer-link"><i class="bi bi-geo-alt"></i> Toshkent, O'zbekiston</p>
+                <p class="footer-link"><i class="bi bi-clock"></i> Dush-Shan: 9:00–22:00</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>© 2025 uzHaridor. Barcha huquqlar himoyalangan.</span>
+            <div style="display:flex; gap:16px;">
+                <a href="#" style="color:#444; text-decoration:none; font-size:0.78rem;">Maxfiylik siyosati</a>
+                <a href="#" style="color:#444; text-decoration:none; font-size:0.78rem;">Foydalanish shartlari</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+// Theme system
+const THEME_KEY = 'uzharidor_theme';
+
+function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    const icon = document.getElementById('themeIcon');
+    if (!icon) return;
+    if (theme === 'light') {
+        icon.className = 'bi bi-sun-fill';
+        icon.style.color = '#f59e0b';
+    } else {
+        icon.className = 'bi bi-moon-stars-fill';
+        icon.style.color = '#a78bfa';
+    }
+}
+
+function toggleTheme() {
+    const current = document.documentElement.getAttribute('data-theme') || 'dark';
+    const next = current === 'dark' ? 'light' : 'dark';
+    localStorage.setItem(THEME_KEY, next);
+    applyTheme(next);
+}
+
+// Sahifa yuklanganida saqlangan temani qo'llash
+(function() {
+    const saved = localStorage.getItem(THEME_KEY) || 'dark';
+    applyTheme(saved);
+})();
+</script>
+</body>
+</html>

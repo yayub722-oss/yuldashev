@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Sevimlilar — uzHaridor{% endblock %}
+{% block content %}
+<div style="padding:32px 0;">
+    <div class="section-title"><i class="bi bi-heart-fill" style="color:#f87171;"></i> Sevimlilar</div>
+    <div class="gold-line"></div>
+    {% if products %}
+    <div class="products-grid">
+        {% for product in products %}
+        <div class="product-card">
+            {% if product.image %}
+                <img src="/{{ product.image }}" class="product-img" alt="{{ product.name }}">
+            {% else %}
+                <div class="product-img-ph"><i class="bi bi-image"></i></div>
+            {% endif %}
+            <div class="product-body">
+                <div class="product-cat">{{ product.category.name if product.category else '' }}</div>
+                <div class="product-name">{{ product.name }}</div>
+                <div class="product-price">{{ "{:,.0f}".format(product.price) }} so'm</div>
+                <div class="product-actions" style="margin-top:10px;">
+                    <a href="/product/{{ product.id }}" class="btn-outline-gold" style="flex:1; justify-content:center; font-size:0.78rem; padding:8px;">Ko'rish</a>
+                    <a href="/wishlist/toggle/{{ product.id }}" style="background:var(--dark3); border:1px solid #333; border-radius:6px; padding:8px 10px; color:#f87171; display:flex; align-items:center; text-decoration:none;">
+                        <i class="bi bi-heart-fill"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div style="text-align:center; padding:80px 0; color:#444;">
+        <i class="bi bi-heart" style="font-size:3.5rem; display:block; margin-bottom:16px; opacity:0.3;"></i>
+        <p style="font-size:1rem; margin-bottom:20px;">Sevimlilar ro'yxati bo'sh</p>
+        <a href="/" class="btn-gold">Xarid qilish</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

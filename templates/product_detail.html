@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}{{ product.name }} — uzHaridor{% endblock %}
+{% block content %}
+
+<div style="padding:24px 0 40px;">
+    <a href="/" style="color:var(--gray); text-decoration:none; font-size:0.85rem;">
+        <i class="bi bi-arrow-left"></i> Orqaga
+    </a>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:48px; margin-top:24px;">
+        <div>
+            {% if product.image %}
+                <img src="/{{ product.image }}" style="width:100%; border-radius:16px; border:1px solid #222;" alt="{{ product.name }}">
+            {% else %}
+                <div style="width:100%; height:400px; background:var(--dark2); border-radius:16px; border:1px solid #222; display:flex; align-items:center; justify-content:center; color:#444; font-size:4rem;">
+                    <i class="bi bi-image"></i>
+                </div>
+            {% endif %}
+        </div>
+
+        <div>
+            <div class="product-cat" style="margin-bottom:10px;">{{ product.category.name if product.category else '' }}</div>
+            <h1 style="font-family:'Playfair Display',serif; font-size:2rem; font-weight:700; color:#fff; margin-bottom:16px; line-height:1.3;">{{ product.name }}</h1>
+            <div style="font-family:'Playfair Display',serif; font-size:2.2rem; color:var(--gold); font-weight:700; margin-bottom:20px;">
+                {{ "{:,.0f}".format(product.price) }} so'm
+            </div>
+
+            {% if product.description %}
+            <p style="color:#888; font-size:0.95rem; line-height:1.7; margin-bottom:24px;">{{ product.description }}</p>
+            {% endif %}
+
+            <div style="background:var(--dark2); border:1px solid #222; border-radius:10px; padding:16px; margin-bottom:24px;">
+                {% if product.stock > 0 %}
+                    <span style="color:#4ade80;"><i class="bi bi-check-circle-fill"></i> Omborda <strong>{{ product.stock }}</strong> dona mavjud</span>
+                {% else %}
+                    <span style="color:#f87171;"><i class="bi bi-x-circle-fill"></i> Omborda yo'q</span>
+                {% endif %}
+            </div>
+
+            {% if session.user_id and product.stock > 0 %}
+            <form action="/cart/add/{{ product.id }}" method="post" style="display:flex; gap:12px; align-items:center;">
+                <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}"
+                    style="width:80px; background:var(--dark2); border:1px solid #333; border-radius:8px; padding:12px; color:#fff; font-size:1rem; text-align:center; outline:none;">
+                <button class="btn-gold" style="flex:1; justify-content:center; padding:14px;" type="submit">
+                    <i class="bi bi-bag-plus"></i> Savatga qo'shish
+                </button>
+            </form>
+            {% elif not session.user_id %}
+            <a href="/login" class="btn-gold" style="display:block; text-align:center; padding:14px;">
+                <i class="bi bi-person"></i> Xarid qilish uchun kiring
+            </a>
+            {% else %}
+            <div style="background:#2e0d0d; border:1px solid #5c1a1a; border-radius:8px; padding:14px; color:#f87171; text-align:center;">
+                <i class="bi bi-x-circle"></i> Mahsulot tugagan
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

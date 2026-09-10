@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}Profil — uzHaridor{% endblock %}
+{% block content %}
+
+<div style="max-width:800px; margin:40px auto;">
+    <div class="section-title"><i class="bi bi-person-circle" style="color:var(--gold);"></i> Mening profilim</div>
+    <div class="gold-line"></div>
+
+    <div style="display:grid; grid-template-columns:200px 1fr; gap:24px; align-items:start;">
+
+        <!-- CHAP PANEL -->
+        <div style="background:var(--dark2); border:1px solid #222; border-radius:14px; padding:24px; text-align:center;">
+            <div style="width:80px; height:80px; background:linear-gradient(135deg,var(--gold),var(--gold-light)); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 14px; font-size:2rem; color:#000; font-family:'Playfair Display',serif; font-weight:700;">
+                {{ user.fullname[0]|upper }}
+            </div>
+            <div style="font-weight:700; color:#fff; margin-bottom:4px;">{{ user.fullname }}</div>
+            <div style="color:#666; font-size:0.8rem;">{{ user.phone }}</div>
+            {% if user.is_admin %}
+            <div style="margin-top:10px; background:#1a1400; border:1px solid var(--gold); border-radius:20px; padding:4px 12px; font-size:0.72rem; color:var(--gold); display:inline-block;">
+                <i class="bi bi-shield-check"></i> Admin
+            </div>
+            {% endif %}
+
+            <div style="margin-top:24px; border-top:1px solid #222; padding-top:16px; display:flex; flex-direction:column; gap:6px;">
+                <a href="/orders" style="color:#aaa; text-decoration:none; font-size:0.85rem; padding:8px; border-radius:8px; transition:all 0.2s; display:flex; align-items:center; gap:8px;" onmouseover="this.style.background='#1a1a1a'; this.style.color='var(--gold)'" onmouseout="this.style.background=''; this.style.color='#aaa'">
+                    <i class="bi bi-receipt"></i> Buyurtmalarim
+                </a>
+                <a href="/wishlist" style="color:#aaa; text-decoration:none; font-size:0.85rem; padding:8px; border-radius:8px; transition:all 0.2s; display:flex; align-items:center; gap:8px;" onmouseover="this.style.background='#1a1a1a'; this.style.color='var(--gold)'" onmouseout="this.style.background=''; this.style.color='#aaa'">
+                    <i class="bi bi-heart"></i> Sevimlilar
+                </a>
+                {% if user.is_admin %}
+                <a href="/admin" style="color:#aaa; text-decoration:none; font-size:0.85rem; padding:8px; border-radius:8px; transition:all 0.2s; display:flex; align-items:center; gap:8px;" onmouseover="this.style.background='#1a1a1a'; this.style.color='var(--gold)'" onmouseout="this.style.background=''; this.style.color='#aaa'">
+                    <i class="bi bi-shield-check"></i> Admin panel
+                </a>
+                {% endif %}
+                <a href="/logout" style="color:#f87171; text-decoration:none; font-size:0.85rem; padding:8px; border-radius:8px; display:flex; align-items:center; gap:8px;">
+                    <i class="bi bi-box-arrow-right"></i> Chiqish
+                </a>
+            </div>
+        </div>
+
+        <!-- O'NG PANEL -->
+        <div>
+            <!-- TAHRIRLASH FORMASI -->
+            <div class="form-card" style="margin-bottom:20px;">
+                <div style="font-family:'Playfair Display',serif; font-size:1.1rem; font-weight:700; color:#fff; margin-bottom:22px; display:flex; align-items:center; gap:10px;">
+                    <i class="bi bi-pencil-square" style="color:var(--gold);"></i> Profilni tahrirlash
+                </div>
+
+                <form action="/profile" method="post">
+                    <label class="form-label">Ism familiya</label>
+                    <input type="text" name="fullname" class="form-input" value="{{ user.fullname }}" placeholder="Ism familiya">
+
+                    <label class="form-label">Telefon raqam</label>
+                    <input type="text" name="phone" class="form-input" value="{{ user.phone }}" placeholder="+998901234567">
+
+                    <div style="border-top:1px solid #222; padding-top:16px; margin-top:4px;">
+                        <div style="color:#666; font-size:0.8rem; margin-bottom:12px;">
+                            <i class="bi bi-lock"></i> Parolni o'zgartirish (ixtiyoriy)
+                        </div>
+                        <input type="password" name="password" class="form-input" placeholder="Yangi parol (bo'sh qoldiring — o'zgarmaydi)" minlength="6">
+                    </div>
+
+                    <button class="btn-gold" style="width:100%; justify-content:center; padding:13px; margin-top:4px;" type="submit">
+                        <i class="bi bi-check-circle"></i> Saqlash
+                    </button>
+                </form>
+            </div>
+
+            <!-- SO'NGGI BUYURTMALAR -->
+            <div style="background:var(--dark2); border:1px solid #222; border-radius:14px; padding:24px;">
+                <div style="font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; color:#fff; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center;">
+                    <span><i class="bi bi-clock-history" style="color:var(--gold);"></i> So'nggi buyurtmalar</span>
+                    <a href="/orders" style="font-size:0.8rem; color:var(--gold); text-decoration:none;">Barchasini ko'rish →</a>
+                </div>
+                {% if user.orders %}
+                    {% for order in user.orders[-3:]|reverse %}
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #1a1a1a;">
+                        <div>
+                            <div style="font-size:0.85rem; color:#fff; font-weight:500;">Buyurtma #{{ order.id }}</div>
+                            <div style="font-size:0.75rem; color:#555;">{{ order.created_at.strftime('%d.%m.%Y') }}</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="color:var(--gold); font-size:0.9rem; font-weight:600;">{{ "{:,.0f}".format(order.total_price) }} so'm</div>
+                            <span class="status-badge status-{{ order.status }}" style="font-size:0.7rem;">
+                                {% if order.status=='pending' %}Kutilmoqda
+                                {% elif order.status=='processing' %}Jarayonda
+                                {% elif order.status=='delivered' %}Yetkazildi
+                                {% elif order.status=='cancelled' %}Bekor{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div style="text-align:center; padding:30px 0; color:#444;">
+                        <i class="bi bi-bag-x" style="font-size:2rem; display:block; margin-bottom:10px;"></i>
+                        <p style="font-size:0.85rem;">Hali buyurtma yo'q</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

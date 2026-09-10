@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Buyurtmalarim — uzHaridor{% endblock %}
+{% block content %}
+
+<div style="padding:32px 0;">
+    <div class="section-title"><i class="bi bi-receipt"></i> Buyurtmalarim</div>
+    <div class="gold-line"></div>
+
+    {% if orders %}
+    <div style="display:flex; flex-direction:column; gap:16px;">
+        {% for order in orders %}
+        <div style="background:var(--dark2); border:1px solid #222; border-radius:12px; padding:24px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                <div>
+                    <span style="font-family:'Playfair Display',serif; font-size:1.1rem; font-weight:700; color:#fff;">Buyurtma #{{ order.id }}</span>
+                    <span style="color:var(--gray); font-size:0.8rem; margin-left:12px;">{{ order.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <span style="font-family:'Playfair Display',serif; font-size:1.2rem; color:var(--gold); font-weight:700;">
+                        {{ "{:,.0f}".format(order.total_price) }} so'm
+                    </span>
+                    <span class="status-badge status-{{ order.status }}">
+                        {% if order.status == 'pending' %}⏳ Kutilmoqda
+                        {% elif order.status == 'processing' %}🔄 Jarayonda
+                        {% elif order.status == 'delivered' %}✅ Yetkazildi
+                        {% elif order.status == 'cancelled' %}❌ Bekor{% endif %}
+                    </span>
+                </div>
+            </div>
+
+            <div style="border-top:1px solid #1a1a1a; padding-top:12px;">
+                <div style="color:var(--gray); font-size:0.82rem; margin-bottom:10px;">
+                    <i class="bi bi-geo-alt" style="color:var(--gold);"></i> {{ order.address }}
+                </div>
+                {% for item in order.items %}
+                <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:#aaa; padding:4px 0; border-bottom:1px solid #1a1a1a;">
+                    <span>{{ item.product.name }} × {{ item.quantity }}</span>
+                    <span>{{ "{:,.0f}".format(item.price * item.quantity) }} so'm</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <div style="text-align:center; padding:100px 0; color:var(--gray);">
+        <i class="bi bi-bag-x" style="font-size:4rem; display:block; margin-bottom:20px; opacity:0.4;"></i>
+        <p style="font-size:1.1rem; margin-bottom:24px;">Hali buyurtma berilmagan</p>
+        <a href="/" class="btn-gold">Xarid qilishni boshlash</a>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Ro'yxat — uzHaridor{% endblock %}
+{% block content %}
+
+<div style="max-width:440px; margin:60px auto;">
+    <div class="form-card">
+        <div style="text-align:center; margin-bottom:32px;">
+            <div style="font-family:'Playfair Display',serif; font-size:2rem; background:linear-gradient(135deg,var(--gold),var(--gold-light)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; font-weight:900;">uzHaridor</div>
+            <p style="color:var(--gray); margin-top:6px;">Yangi hisob yarating</p>
+        </div>
+
+        <form action="/register" method="post">
+            <label class="form-label">Ism familiya</label>
+            <input type="text" name="fullname" class="form-input" placeholder="Abdullayev Jasur" required>
+
+            <label class="form-label">Telefon raqam</label>
+            <input type="text" name="phone" class="form-input" placeholder="+998901234567" required>
+
+            <label class="form-label">Parol</label>
+            <input type="password" name="password" class="form-input" placeholder="Kamida 6 ta belgi" minlength="6" required>
+
+            <button class="btn-gold" style="width:100%; justify-content:center; padding:14px; font-size:1rem; margin-top:8px;" type="submit">
+                Ro'yxatdan o'tish <i class="bi bi-arrow-right"></i>
+            </button>
+        </form>
+
+        <p style="text-align:center; color:var(--gray); font-size:0.85rem; margin-top:20px;">
+            Hisobingiz bormi? <a href="/login" style="color:var(--gold); text-decoration:none;">Kiring</a>
+        </p>
+    </div>
+</div>
+
+{% endblock %}
