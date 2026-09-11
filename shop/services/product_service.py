@@ -3,7 +3,7 @@ from models import Product, Category
 from sqlalchemy.orm import joinedload
 from werkzeug.utils import secure_filename
 
-UPLOAD_FOLDER = "uploads/products"
+UPLOAD_FOLDER = "static/uploads/products"
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
 
 
@@ -35,7 +35,7 @@ def create_product(db, name, description, price, stock, category_id, image_file=
         os.makedirs(UPLOAD_FOLDER, exist_ok=True)
         save_path = os.path.join(UPLOAD_FOLDER, filename)
         image_file.save(save_path)
-        image_path = save_path
+        image_path = save_path.replace("\\", "/")
 
     product = Product(
         name=name,

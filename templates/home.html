@@ -113,13 +113,13 @@
     <div class="product-card">
         <div style="position:relative;">
             {% if product.image %}
-                <img src="/{{ product.image }}" class="product-img" alt="{{ product.name }}">
+                <img src="/static/uploads/products/{{ product.image }}" class="product-img" alt="{{ product.name }}">
             {% else %}
                 <div class="product-img-ph"><i class="bi bi-image"></i></div>
             {% endif %}
-            <button class="wishlist-btn" style="position:absolute; top:10px; right:10px;" title="Sevimlilarga qo'shish">
-                <i class="bi bi-heart"></i>
-            </button>
+         <a href="/wishlist/toggle/{{ product.id }}" class="wishlist-btn" style="position:absolute; top:10px; right:10px;">
+    <i class="bi bi-heart{% if product.id in session.get('wishlist', []) %}-fill{% endif %}"></i>
+</a>
             {% if product.stock == 0 %}
                 <div style="position:absolute; top:10px; left:10px; background:#2e0d0d; color:#f87171; font-size:0.7rem; padding:3px 10px; border-radius:20px; border:1px solid #5c1a1a;">Tugagan</div>
             {% elif loop.index <= 3 %}

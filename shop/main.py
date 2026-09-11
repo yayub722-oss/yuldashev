@@ -11,8 +11,9 @@ from services.order_service import (
 )
 
 app = Flask(__name__)
-app.secret_key = "supersecretkey_change_in_production"
-app.config["UPLOAD_FOLDER"] = "uploads"
+import os
+app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-key-local")
+app.config["UPLOAD_FOLDER"] = "static/uploads"
 
 init_db()
 

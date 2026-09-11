@@ -10,7 +10,7 @@
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:48px; margin-top:24px;">
         <div>
             {% if product.image %}
-                <img src="/{{ product.image }}" style="width:100%; border-radius:16px; border:1px solid #222;" alt="{{ product.name }}">
+                <img src="/static/uploads/products/{{ product.image }}" style="width:100%; border-radius:16px; border:1px solid #222;" alt="{{ product.name }}">
             {% else %}
                 <div style="width:100%; height:400px; background:var(--dark2); border-radius:16px; border:1px solid #222; display:flex; align-items:center; justify-content:center; color:#444; font-size:4rem;">
                     <i class="bi bi-image"></i>

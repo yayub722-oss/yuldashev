@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime,Boolean
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from database import Base
@@ -11,7 +11,7 @@ class User(Base):
     fullname = Column(String(100), nullable=False)
     phone = Column(String(20), unique=True, nullable=False)
     password = Column(String(255), nullable=False)
-    is_admin = Column(Integer, default=0)
+    is_admin = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     orders = relationship("Order", back_populates="user")

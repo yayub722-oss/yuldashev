@@ -338,6 +338,10 @@ const THEME_KEY = 'uzharidor_theme';
 
 function applyTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
+    const link = document.getElementById('themeStylesheet');
+    if (link) {
+        link.href = theme === 'dark' ? '/static/css/dark.css' : '/static/css/light.css';
+    }
     const icon = document.getElementById('themeIcon');
     if (!icon) return;
     if (theme === 'light') {

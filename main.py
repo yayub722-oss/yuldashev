@@ -11,8 +11,9 @@ from services.order_service import (
 )
 
 app = Flask(__name__)
-app.secret_key = "supersecretkey_change_in_production"
-app.config["UPLOAD_FOLDER"] = "uploads"
+import os
+app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-key-local")
+app.config["UPLOAD_FOLDER"] = "static/uploads"
 
 init_db()
 
@@ -342,3 +343,5 @@ def wishlist_toggle(product_id):
         flash("Sevimlilarga qo'shildi ❤️", "success")
     session["wishlist"] = wish
     return redirect(request.referrer or url_for("home"))
+
+#ayub2430

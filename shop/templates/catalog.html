@@ -73,7 +73,7 @@
             <div class="product-card">
                 <div style="position:relative;">
                     {% if product.image %}
-                        <img src="/{{ product.image }}" class="product-img" alt="{{ product.name }}">
+                        <img src="/static/uploads/products/{{ product.image }}" class="product-img" alt="{{ product.name }}">
                     {% else %}
                         <div class="product-img-ph"><i class="bi bi-image"></i></div>
                     {% endif %}
